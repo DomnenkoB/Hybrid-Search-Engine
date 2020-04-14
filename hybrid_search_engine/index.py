@@ -70,8 +70,10 @@ def build_postings(corpus, columns):
 def convert_postings_to_df(postings, frequencies, columns):
     postings_df = pd.DataFrame({
         "token": [k for k in postings.keys()],
-        "token vector": [nlp_engine(k).vector / np.linalg.norm(nlp_engine(k).vector) for k in postings.keys()]
+        "token vector": [nlp_engine(k).vector for k in postings.keys()]
     })
+
+    postings_df["token vector"] = postings_df["token vector"].apply(lambda v: v / np.linalg.norm(v))
 
     for column in columns:
         postings_df[column] = [[] for _ in range(len(postings.keys()))]
