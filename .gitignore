@@ -4,3 +4,6 @@
 /Include/
 /.idea/
 pyvenv.cfg
+hybrid_search_engine.egg-info/
+build/
+dist/
