@@ -8,7 +8,7 @@ from hybrid_search_engine import nlp_engine
 import hybrid_search_engine.utils.text_processing as processing
 
 
-def build_index_from_df(df: pd.DataFrame, columns, id_column, filtering_columns, min_token_len=1):
+def build_index_from_df(df: pd.DataFrame, columns, id_column, filtering_columns=[], min_token_len=1):
     df = processing.process_df(df, text_columns=columns, lemmatize=True, remove_stopwords=True, lower=True)
 
     postings, frequencies = build_postings(df, columns)
