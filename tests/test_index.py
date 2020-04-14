@@ -2,7 +2,7 @@ from testtools import TestCase
 import pandas as pd
 import numpy as np
 
-from semantic_search import index
+from hybrid_search_engine import index
 
 
 class TestIndex(TestCase):

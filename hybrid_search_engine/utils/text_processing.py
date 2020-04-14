@@ -6,7 +6,7 @@ from string import punctuation
 import numpy as np
 from nltk import word_tokenize
 
-from semantic_search import nlp_engine, stop_words, lemmatizer
+from hybrid_search_engine import nlp_engine, stop_words, lemmatizer
 
 
 def prepare_corpus(corpus, min_token_len=1, lemmatize=True):

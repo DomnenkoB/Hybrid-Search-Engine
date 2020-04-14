@@ -15,5 +15,6 @@ setuptools.setup(
         "Programming Language :: Python :: 3",
         "Operating System :: OS Independent"
     ],
+    packages=["hybrid_search_engine"],
     python_requires=">=3.6"
 )

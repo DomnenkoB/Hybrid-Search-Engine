@@ -4,8 +4,8 @@ import numpy as np
 import pandas as pd
 from nltk import word_tokenize
 
-from semantic_search import nlp_engine
-import semantic_search.utils.text_processing as processing
+from hybrid_search_engine import nlp_engine
+import hybrid_search_engine.utils.text_processing as processing
 
 
 def build_index_from_df(df: pd.DataFrame, columns, id_column, filtering_columns, min_token_len=1):
