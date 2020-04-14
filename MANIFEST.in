@@ -1,0 +1,4 @@
+exclude /tests
+exclude /Include
+exclude /Lib
+exclude /Scripts
