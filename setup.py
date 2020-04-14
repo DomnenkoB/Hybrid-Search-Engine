@@ -5,7 +5,7 @@ with open("README.md", "r") as f:
     long_description = f.read()
 
 setuptools.setup(
-    name="hybrid-search-engine",
+    name="hybrid_search_engine",
     version="1.0.0",
     author="Andrii Boichuk, Bohdan Domnenko",
     long_description=long_description,
