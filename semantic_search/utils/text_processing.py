@@ -34,6 +34,9 @@ def process_df(df, text_columns, lower=True, lemmatize=True, remove_stopwords=Tr
                                  remove_stopwords=remove_stopwords) for v in values]
         df[col] = values
 
+    for col in text_columns:
+        df[col] = df[col].apply(word_tokenize)
+
     return df
 
 

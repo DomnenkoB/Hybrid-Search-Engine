@@ -1,9 +1,10 @@
-/Scripts/
-/Lib/
-/Scripts/
-/Include/
-/.idea/
-pyvenv.cfg
-hybrid_search_engine.egg-info/
 build/
 dist/
+Scripts/
+Lib/
+Scripts/
+Include/
+.idea/
+pyvenv.cfg
+semantic_search/__pycache__/__init__.cpython-37.pyc
+hybrid_search_engine.egg-info/
