@@ -1,9 +1,12 @@
 build/
 dist/
 Scripts/
+/data
 Lib/
 Scripts/
 Include/
+share/
+utc/
 .idea/
 pyvenv.cfg
 semantic_search/__pycache__/__init__.cpython-37.pyc

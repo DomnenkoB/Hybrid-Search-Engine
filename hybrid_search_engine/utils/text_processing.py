@@ -6,7 +6,7 @@ from string import punctuation
 import numpy as np
 from nltk import word_tokenize
 
-from semantic_search import nlp_engine, stop_words, lemmatizer
+from hybrid_search_engine import nlp_engine, stop_words, lemmatizer
 
 
 def prepare_corpus(corpus, min_token_len=1, lemmatize=True):
@@ -29,13 +29,16 @@ def prepare_documents(documents, min_token_len=1, lemmatize=True):
 
 def process_df(df, text_columns, lower=True, lemmatize=True, remove_stopwords=True):
     for col in text_columns:
-        values = df[col].values.tolist()
-        values = [process_string(v, lower=lower, lemmatize=lemmatize,
-                                 remove_stopwords=remove_stopwords) for v in values]
-        df[col] = values
-
-    for col in text_columns:
+        df[col] = df[col].apply(str)
+        if lower:
+            df[col] = df[col].apply(str.lower)
         df[col] = df[col].apply(word_tokenize)
+
+        if lemmatize:
+            df[col] = df[col].apply(lambda d: [lemmatizer.lemmatize(t) for t in d])
+        if remove_stopwords:
+            df[col]  = df[col] .apply(lambda d: [t for t in d if t not in stop_words])
+        df[col] = df[col].apply(lambda d: [t for t in d if t not in punctuation])
 
     return df
 

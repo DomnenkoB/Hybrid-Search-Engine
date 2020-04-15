@@ -2,7 +2,7 @@ from testtools import TestCase
 import pandas as pd
 import numpy as np
 
-from semantic_search import index
+from hybrid_search_engine import index
 
 
 class TestIndex(TestCase):
@@ -38,7 +38,7 @@ class TestIndex(TestCase):
             actual_values = index_df[c].values.tolist()
 
             for v1, v2 in zip(expected_values, actual_values):
-                self.assertEqual(True, (v1 == v2).all())
+                self.assertTrue((v1 == v2).all())
 
         expected_norm_values = np.array([
             [1., 1 / np.sqrt(2)],
@@ -48,5 +48,5 @@ class TestIndex(TestCase):
 
         expected_ids = np.array([1, 2, 3])
 
-        self.assertEqual(True, (expected_norm_values == documents_df[[f"{c} Norm" for c in columns]].values).all())
-        self.assertEqual(True, (expected_ids == documents_df[id_column].values).all())
+        self.assertTrue((expected_norm_values == documents_df[[f"{c} Norm" for c in columns]].values).all())
+        self.assertTrue((expected_ids == documents_df[id_column].values).all())

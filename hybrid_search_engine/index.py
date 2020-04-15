@@ -4,11 +4,11 @@ import numpy as np
 import pandas as pd
 from nltk import word_tokenize
 
-from semantic_search import nlp_engine
-import semantic_search.utils.text_processing as processing
+from hybrid_search_engine import nlp_engine
+import hybrid_search_engine.utils.text_processing as processing
 
 
-def build_index_from_df(df: pd.DataFrame, columns, id_column, filtering_columns, min_token_len=1):
+def build_index_from_df(df: pd.DataFrame, columns, id_column, filtering_columns=[], min_token_len=1):
     df = processing.process_df(df, text_columns=columns, lemmatize=True, remove_stopwords=True, lower=True)
 
     postings, frequencies = build_postings(df, columns)
@@ -70,8 +70,10 @@ def build_postings(corpus, columns):
 def convert_postings_to_df(postings, frequencies, columns):
     postings_df = pd.DataFrame({
         "token": [k for k in postings.keys()],
-        "token vector": [nlp_engine(k).vector / np.linalg.norm(nlp_engine(k).vector) for k in postings.keys()]
+        "token vector": [nlp_engine(k).vector for k in postings.keys()]
     })
+
+    postings_df["token vector"] = postings_df["token vector"].apply(lambda v: v / np.linalg.norm(v))
 
     for column in columns:
         postings_df[column] = [[] for _ in range(len(postings.keys()))]
