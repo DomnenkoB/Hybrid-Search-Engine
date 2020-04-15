@@ -8,6 +8,8 @@ Include/
 share/
 utc/
 .idea/
+.ipynb_checkpoints/
 pyvenv.cfg
 semantic_search/__pycache__/__init__.cpython-37.pyc
 hybrid_search_engine.egg-info/
+/.ipynb_checkpoints/

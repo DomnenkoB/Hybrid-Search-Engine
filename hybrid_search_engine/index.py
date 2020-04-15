@@ -84,7 +84,8 @@ def convert_postings_to_df(postings, frequencies, columns):
             postings_df.loc[i, column] = np.array(doc_ids)
             postings_df.loc[i, f"{column} TF"] = np.array(frequencies[token][column])
 
+    v_dim = nlp_engine("").vector.shape[0]
     mask = np.sum(postings_df["token vector"].values.tolist(), axis=1)
-    postings_df.loc[pd.isna(mask), "token vector"] = [np.zeros(300)]
+    postings_df.loc[pd.isna(mask), "token vector"] = [np.zeros(v_dim)]
 
     return postings_df
