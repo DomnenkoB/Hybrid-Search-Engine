@@ -6,7 +6,7 @@ from string import punctuation
 import numpy as np
 from nltk import word_tokenize
 
-from hybrid_search_engine import nlp_engine, stop_words, lemmatizer
+from hybrid_search.hybrid_search_engine import nlp_engine, stop_words, lemmatizer
 
 
 def prepare_corpus(corpus, min_token_len=1, lemmatize=True):
@@ -52,7 +52,7 @@ def extract_corpus_tokens(corpus, min_token_len=1):
     return tokens
 
 
-def process_string(s, process_camel_case=False, split_character=["_", "/"], lower=True,
+def process_string(s, process_camel_case=False, split_character=["_", "/"], abrv_dict={}, lower=True,
                    lemmatize=True, remove_stopwords=True, trim_punctuation=True):
     processed_string = str(s)
 
@@ -67,10 +67,13 @@ def process_string(s, process_camel_case=False, split_character=["_", "/"], lowe
         tokens = [lemmatizer.lemmatize(t) for t in tokens]
     if remove_stopwords:
         tokens = [t for t in tokens if t not in stop_words]
+    if lower:
+        if abrv_dict:
+            tokens = [t if t in abrv_dict else t.lower() for t in tokens]
+        else:
+            tokens = [t.lower() for t in tokens]
 
     result = " ".join(tokens)
-    if lower:
-        result = result.lower()
 
     return result
 
