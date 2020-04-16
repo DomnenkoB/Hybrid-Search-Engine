@@ -29,7 +29,9 @@ def prepare_documents(documents, min_token_len=1, lemmatize=True):
 
 def process_df(df, text_columns, lower=True, lemmatize=True, remove_stopwords=True):
     for col in text_columns:
-        df[col] = df[col].apply(str)
+        df[col].fillna("", inplace=True)
+        df[col] = df[col].apply(lambda x: re.sub("[^a-zA-z0-9\s]", " ", x))
+
         if lower:
             df[col] = df[col].apply(str.lower)
         df[col] = df[col].apply(word_tokenize)
