@@ -39,7 +39,7 @@ def process_df(df, text_columns, lower=True, lemmatize=True, remove_stopwords=Tr
         if lemmatize:
             df[col] = df[col].apply(lambda d: [lemmatizer.lemmatize(t) for t in d])
         if remove_stopwords:
-            df[col]  = df[col] .apply(lambda d: [t for t in d if t not in stop_words])
+            df[col] = df[col].apply(lambda d: [t for t in d if t not in stop_words])
         df[col] = df[col].apply(lambda d: [t for t in d if t not in punctuation])
 
     return df

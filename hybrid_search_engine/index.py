@@ -76,8 +76,8 @@ def convert_postings_to_df(postings, frequencies, columns):
     postings_df["token vector"] = postings_df["token vector"].apply(lambda v: v / np.linalg.norm(v))
 
     for column in columns:
-        postings_df[column] = [[] for _ in range(len(postings.keys()))]
-        postings_df[f"{column} TF"] = [[] for _ in range(len(postings.keys()))]
+        postings_df[column] = [np.array([]) for _ in range(len(postings.keys()))]
+        postings_df[f"{column} TF"] = [np.array([]) for _ in range(len(postings.keys()))]
 
     for i, token in enumerate(postings.keys()):
         for column, doc_ids in postings[token].items():
