@@ -26,6 +26,7 @@ class SearchEngine():
         self.filtering_columns = filtering_columns
         self.doc2token_mapping = self.__create_doc2token_mapping()
 
+        self.lower = True
         self.dynamic_idf_reweighting = False
         self.use_TF = True
         self.use_IDF = True
@@ -91,7 +92,7 @@ class SearchEngine():
         else:
             self.normalize_query = True
 
-        if config["similarity_weight"] is not None:
+        if "similarity_weight" in config and config["similarity_weight"] is not None:
             for weight in ["syntax_weight", "semantic_weight"]:
                 if config["similarity_weight"][weight] < 0:
                     raise SearchEngineException(f"{weight} similarity must be greater than 0")
@@ -99,14 +100,17 @@ class SearchEngine():
             self.syntax_weight = config["similarity_weight"]["syntax_weight"]
             self.semantic_weight = config["similarity_weight"]["semantic_weight"]
 
-        if config["column_weights"] is not None:
+        if "column_weights" in config and config["column_weights"] is not None:
             for c, weight in config["column_weights"].items():
                 if weight < 0:
                     raise SearchEngineException(f"{c} weight must be greater than 0")
             self.column_weights = config["column_weights"]
 
+        if "lower" in config:
+            self.lower = config["lower"]
+
     def find(self, query, doc_ids=[], columns=[], filtering_options={}):
-        processed_query = processing.process_string(query)
+        processed_query = processing.process_string(query, lower=self.lower)
         query_tokens = word_tokenize(processed_query)
         if len(query_tokens) == 0:
             return f"Unable to process query. Query '{query}' has been reduced to empty string by text processing"
