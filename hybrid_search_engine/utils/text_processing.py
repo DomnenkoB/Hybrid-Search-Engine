@@ -2,7 +2,6 @@ import re
 from functools import reduce
 from string import punctuation
 
-
 import numpy as np
 from nltk import word_tokenize
 

@@ -20,13 +20,15 @@ class TestIndex(TestCase):
         index_df, documents_df = index.build_index_from_df(df, columns=columns, id_column=id_column,
                                                            filtering_columns=filtering_columns)
         expected_index = pd.DataFrame({
-            "token": ["cat", "mammal", "dog", "animal", "feline"],
-            "Title": [[0, 2], [], [1], [], []],
-            "Data": [[0], [0, 1], [], [1], [2]],
-            "Title TF": [[1, 1], [], [1], [], []],
-            "Data TF": [[1], [1, 1], [], [1], [1]]
+            "token": ["cat", "dog", "mammal", "animal", "feline"],
+            "Title": [[0, 2], [1], [], [], []],
+            "Data": [[0], [], [0, 1], [1], [2]],
+            "Title TF": [[1, 1], [1], [], [], []],
+            "Data TF": [[1], [], [1, 1], [1], [1]]
         })
         cols = ["Title", "Data", "Title TF", "Data TF"]
+
+        print(index_df[["token"] + cols])
 
         for c in cols:
             expected_index[c] = expected_index[c].apply(np.array)
@@ -38,6 +40,8 @@ class TestIndex(TestCase):
             actual_values = index_df[c].values.tolist()
 
             for v1, v2 in zip(expected_values, actual_values):
+                print(v1)
+                print(v2)
                 self.assertTrue((v1 == v2).all())
 
         expected_norm_values = np.array([
