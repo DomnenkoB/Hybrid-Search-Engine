@@ -1,9 +1,11 @@
 from collections import defaultdict
 import logging
 import time
+import multiprocessing as mp
 
 import numpy as np
 import pandas as pd
+import dask.dataframe as dd
 from nltk import word_tokenize
 from rank_bm25 import BM25Okapi
 
@@ -126,25 +128,56 @@ def convert_postings_to_df(postings, frequencies, columns):
     postings_df = pd.DataFrame({
         "token": [k for k in postings.keys()],
     })
+    n_cores = mp.cpu_count()
+    # ddata = dd.from_pandas(postings_df, npartitions=n_cores * 4)
 
+    # def vectorize_token(x):
+    #     v = nlp_engine(x).vector
+    #     v_norm = np.linalg.norm(v)
+    #
+    #     return v / v_norm
+    #
+    # result = ddata.map_partitions(lambda df_: df_["token"].apply(vectorize_token)).compute(scheduler="processes")
+    # postings_df["token vector"] = result
     postings_df["token vector"] = postings_df["token"].apply(lambda t: nlp_engine(t).vector)
     postings_df["token vector"] = postings_df["token vector"].apply(lambda v: v / np.linalg.norm(v))
-    #
+
     # for column in columns:
     #     postings_df[column] = [np.array([]) for _ in range(len(postings.keys()))]
     #     postings_df[f"{column} TF"] = [np.array([]) for _ in range(len(postings.keys()))]
 
+    # for column in columns:
+    #     def process_token_postings(x):
+    #         arr = postings[x].get(column, [])
+    #
+    #         return np.array(arr, dtype=np.int32)
+    #         # return arr
+    #
+    #     def process_token_frequencies(x):
+    #         arr = frequencies[x].get(column, [])
+    #
+    #         return np.array(arr, dtype=np.int32)
+    #         # return arr
+    #
+    #     result = ddata.map_partitions(lambda df_: df_["token"].apply(process_token_postings), meta=pd.Series([], dtype=object, name=column))\
+    #         .compute(scheduler="processes")
+    #     postings_df[column] = result
+    #
+    #     result = ddata.map_partitions(lambda df_: df_["token"].apply(process_token_frequencies), meta=pd.Series([], dtype=object, name=f"{column} TF"))\
+    #         .compute(scheduler="processes")
+    #     postings_df[f"{column} TF"] = result
+    #
     for column in columns:
         postings_df[column] = postings_df["token"].apply(lambda t: postings[t].get(column, []))
         postings_df[f"{column} TF"] = postings_df["token"].apply(lambda t: frequencies[t].get(column, []))
 
         postings_df[column] = postings_df[column].apply(lambda x: np.array(x, dtype=np.int32))
         postings_df[f"{column} TF"] = postings_df[f"{column} TF"].apply(lambda x: np.array(x, dtype=np.int32))
-    #
-    # for i, token in enumerate(postings.keys()):
-    #     for column, doc_ids in postings[token].items():
-    #         postings_df.loc[i, column] = np.array(doc_ids)
-    #         postings_df.loc[i, f"{column} TF"] = np.array(frequencies[token][column])
+
+    for i, token in enumerate(postings.keys()):
+        for column, doc_ids in postings[token].items():
+            postings_df.loc[i, column] = np.array(doc_ids)
+            postings_df.loc[i, f"{column} TF"] = np.array(frequencies[token][column])
 
     v_dim = nlp_engine("").vector.shape[0]
     mask = np.sum(postings_df["token vector"].values.tolist(), axis=1)

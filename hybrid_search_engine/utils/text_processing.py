@@ -1,8 +1,11 @@
 import re
 from functools import reduce
 from string import punctuation
+import multiprocessing as mp
 
 import numpy as np
+import pandas as pd
+import dask.dataframe as dd
 from nltk import word_tokenize
 
 from hybrid_search_engine import nlp_engine, stop_words, lemmatizer
@@ -27,19 +30,44 @@ def prepare_documents(documents, min_token_len=1, lemmatize=True):
 
 
 def process_df(df, text_columns, lower=True, lemmatize=True, remove_stopwords=True):
-    for col in text_columns:
-        df[col].fillna("", inplace=True)
-        df[col] = df[col].apply(lambda x: re.sub("[^a-zA-Z0-9\s]", " ", x))
+    df[text_columns].fillna("", inplace=True)
+    n_cores = mp.cpu_count()
+    ddata = dd.from_pandas(df, npartitions=n_cores*4)
 
+    def process(x):
+        x = re.sub("[^a-zA-Z0-9\s]", " ", x)
         if lower:
-            df[col] = df[col].apply(str.lower)
-        df[col] = df[col].apply(word_tokenize)
+            x = x.lower()
 
+        x = word_tokenize(x)
         if lemmatize:
-            df[col] = df[col].apply(lambda d: [lemmatizer.lemmatize(t) for t in d])
+            x = [lemmatizer.lemmatize(t) for t in x]
         if remove_stopwords:
-            df[col] = df[col].apply(lambda d: [t for t in d if t not in stop_words])
-        df[col] = df[col].apply(lambda d: [t for t in d if t not in punctuation])
+            x = [t for t in x if t not in stop_words]
+        x = [t for t in x if t not in punctuation]
+
+        return x
+
+    for col in text_columns:
+        result = ddata.map_partitions(lambda df_: df_[col].apply(process)).compute(scheduler="processes")
+        df[col] = result
+        # df[col] = pd.DataFrame(result)
+
+    del ddata
+
+    # for col in text_columns:
+    #     df[col].fillna("", inplace=True)
+    #     df[col] = df[col].apply(lambda x: re.sub("[^a-zA-Z0-9\s]", " ", x))
+    #
+    #     if lower:
+    #         df[col] = df[col].apply(str.lower)
+    #     df[col] = df[col].apply(word_tokenize)
+    #
+    #     if lemmatize:
+    #         df[col] = df[col].apply(lambda d: [lemmatizer.lemmatize(t) for t in d])
+    #     if remove_stopwords:
+    #         df[col] = df[col].apply(lambda d: [t for t in d if t not in stop_words])
+    #     df[col] = df[col].apply(lambda d: [t for t in d if t not in punctuation])
 
     return df
 

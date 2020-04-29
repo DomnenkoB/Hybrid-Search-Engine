@@ -10,6 +10,8 @@ utc/
 .idea/
 .ipynb_checkpoints/
 pyvenv.cfg
-semantic_search/__pycache__/__init__.cpython-37.pyc
+hybrid_search_engine/__pycache__/
+hybrid_search_engine/utils/__pycache__/
+/__pycache__
 hybrid_search_engine.egg-info/
 /.ipynb_checkpoints/
