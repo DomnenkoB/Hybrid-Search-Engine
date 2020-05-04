@@ -31,6 +31,8 @@ def prepare_documents(documents, min_token_len=1, lemmatize=True):
 
 def process_df(df, text_columns, lower=True, lemmatize=True, remove_stopwords=True):
     df[text_columns].fillna("", inplace=True)
+    for col in text_columns:
+        df[col] = df[col].apply(str)
     n_cores = mp.cpu_count()
     ddata = dd.from_pandas(df, npartitions=n_cores*4)
 

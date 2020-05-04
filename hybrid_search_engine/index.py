@@ -73,7 +73,7 @@ def build_postings(corpus, columns):
                         postings[token][column].append(i)
                         frequencies[token][column].append(frequency)
                     else:
-                        if column in postings:
+                        if column in postings[token]:
                             postings[token][column] = [i]
                             frequencies[token][column] [frequency]
                         else:
